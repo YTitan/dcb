@@ -7,7 +7,6 @@
 #include "common.h"
 #include "processHandler.h"
 
-static void Init();
 static FILE* file = NULL;
 
 

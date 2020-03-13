@@ -3,12 +3,10 @@
 #include "ipc.h"
 #include <unistd.h>
 #include <sys/types.h>
-#include <signal.h>
 #include <sys/wait.h>
 #include "ipcHandler.h"
 #include <stdio.h>
 #include "common.h"
-#include <signal.h>
 
 static local_id localProcessId = -1;
 
@@ -100,11 +98,14 @@ local_id CreateAndInitChildProcesses(local_id numChildProcesses, IPCHelper** ipc
 	}
 	// destroy all the created processes and pipes if failed to create some of them
 	if (localProcessId == 0 && numCreatedProcesses != numChildProcesses){
-		for (local_id i = 1; i <= numCreatedProcesses; ++i)
+		/*  // commented because kill doesn't seem to be available
+		for (local_id i = 1; i <= numCreatedProcesses; ++i){
 			kill(GetChildProcessId(i), SIGKILL);
+		}
 		WaitForChildProcessesToTerminate();
-
+		*/
 		DestroyCreatedPipes();
+		return -1;
 	}
 
 	// at this point begins separate work of each process

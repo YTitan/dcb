@@ -2,11 +2,16 @@ CC=clang
 
 CFLAGS=-std=c99 -Wall -pedantic
 
-all: pa1 pa1.tar.gz
+all: main pa1.tar.gz
 
 pa1.tar.gz: src/*.c src/*.h
-	tar -cvzf pa1.tar.gz -C src .
+	mkdir pa1
+	cp -r src/* pa1
+	cd pa1
+	tar -cvzf pa1.tar.gz pa1
+	cd ..
+	rm -r pa1
 
-pa1: src/*.c src/*.h
-	${CC} ${CFLAGS} src/*.c -o pa1
+main: src/*.c src/*.h
+	${CC} ${CFLAGS} src/*.c -o main 
 	

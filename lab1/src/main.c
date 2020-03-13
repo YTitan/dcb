@@ -18,11 +18,15 @@ int main(int argc, char* argv[]){
 
 	// get num processes a command line argument
 	int numChildProcesses;
-	if (argc < 3 || argv[1][0] != '-' || argv[1][1] != 'x' || 
+	if (argc < 3 || argv[1][0] != '-' || argv[1][1] != 'p' || 
 			(numChildProcesses = atoi(argv[2])) <= 0 || numChildProcesses > MAX_NUM_CHILD_PROCESSES){
-		printf("usage: pa1 -x P\nwhere P is a posiive integer of child processes less than or equal to %d\n", MAX_NUM_CHILD_PROCESSES);
+		printf("usage: %s -p X\nwhere X is a posiive integer of child processes less than or equal to %d\n",
+			argv[0], MAX_NUM_CHILD_PROCESSES);
 		return EXIT_FAILURE;
 	}
+
+	// Init logger
+	Init();
 
 	// Create and init child processes
 	if (CreateAndInitChildProcesses(numChildProcesses, &ipc) == -1)

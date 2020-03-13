@@ -1,6 +1,8 @@
 #ifndef __DCB_EVENT_LOGGER__H
 #define __DCB_EVENT_LOGGER__H
 
+void Init();
+
 void LogStarted();
 
 void LogReceiveAllStarted();

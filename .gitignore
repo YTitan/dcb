@@ -2,7 +2,7 @@
 **/*.log
 
 # ignore executables
-lab1/pa1
+lab1/main
 
 # ignore duplicate code and an archive
 lab1/pa1_starter_code
