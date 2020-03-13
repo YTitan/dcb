@@ -1,0 +1,14 @@
+# ignore log output from labworks
+**/*.log
+
+# ignore executables
+lab1/pa1
+
+# ignore duplicate code and an archive
+lab1/pa1_starter_code
+
+# ignore archives
+**/*.tar.gz
+
+# ignore vim's swap files
+**/*.swp
