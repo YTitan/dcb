@@ -1,8 +1,3 @@
-/**
- * @file	ipc.h
- * @Author	Yuri Tcherezov
- * @date	March, 2020
- */
 #include "ipc.h"
 #include "ipcHandler.h"
 #include "processHandler.h"

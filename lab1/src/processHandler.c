@@ -1,9 +1,4 @@
-/**
- * @file processHandler.c
- * @author Yuri Tcherezov
- * @date March, 2020
- */
-
+#include <signal.h>
 #include "processHandler.h"
 #include "ipc.h"
 #include <unistd.h>
@@ -13,6 +8,7 @@
 #include "ipcHandler.h"
 #include <stdio.h>
 #include "common.h"
+#include <signal.h>
 
 static local_id localProcessId = -1;
 

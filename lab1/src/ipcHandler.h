@@ -1,9 +1,3 @@
-/**
- * @file ipcHandler.h
- * @author Yuri Tcherezov
- * @date March, 2020
- */
-
 #ifndef __DBC_IPC_HANDLER__H
 #define __DBC_IPC_HANDLER__H
 

@@ -1,9 +1,3 @@
-/**
- *  @file	eventLogger.c
- *  @Author	Yuri Tcherezov
- *  @date	March, 2020
- */
-
 #include <sys/types.h>
 #include <unistd.h>
 #include <stdio.h>

@@ -1,10 +1,3 @@
-/**
- * @file	processHandler.h
- * @author	Yuri Tcherezov
- * @date	March, 2020
- * @brief	Lab1 helper
- */
-
 #ifndef __DBC_PROCESS_HANDLER__H
 #define __DBC_PROCESS_HANDLER__H
 

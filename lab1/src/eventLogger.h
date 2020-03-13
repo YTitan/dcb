@@ -1,10 +1,3 @@
-/**
- *  @file	eventLogger.h
- *  @Author	Yuri Tcherezov
- *  @date	March, 2020
- *  @vrief	A set of helper function to help logging events
- */
-
 #ifndef __DCB_EVENT_LOGGER__H
 #define __DCB_EVENT_LOGGER__H
 
