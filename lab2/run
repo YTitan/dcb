@@ -1,0 +1,4 @@
+#!/bin/bash
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/home/titan/itmo/dcb/lab2/src/lib64"
+
+LD_PRELOAD="/home/titan/itmo/dcb/lab2/src/lib64/libruntime.so" ./main $*
