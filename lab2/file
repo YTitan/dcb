@@ -1,0 +1,100 @@
+0: process 1 (pid  5485, parent  5484) has STARTED with balance $10
+1: process 1 received all STARTED messages
+1: process 1 transferred $ 1 to process 2
+10: process 1 received $ 1 from process 10
+10: process 1 has DONE with balance $10
+10: process 1 received all DONE messages
+0: process 2 (pid  5486, parent  5484) has STARTED with balance $20
+1: process 2 received all STARTED messages
+1: process 2 received $ 1 from process 1
+2: process 2 transferred $ 2 to process 3
+10: process 2 has DONE with balance $19
+10: process 2 received all DONE messages
+0: process 3 (pid  5487, parent  5484) has STARTED with balance $30
+1: process 3 received all STARTED messages
+2: process 3 received $ 2 from process 2
+3: process 3 transferred $ 3 to process 4
+10: process 3 has DONE with balance $29
+10: process 3 received all DONE messages
+0: process 4 (pid  5488, parent  5484) has STARTED with balance $40
+2: process 4 received all STARTED messages
+3: process 4 received $ 3 from process 3
+4: process 4 transferred $ 4 to process 5
+10: process 4 has DONE with balance $39
+10: process 4 received all DONE messages
+0: process 5 (pid  5489, parent  5484) has STARTED with balance $50
+2: process 5 received all STARTED messages
+4: process 5 received $ 4 from process 4
+5: process 5 transferred $ 5 to process 6
+10: process 5 has DONE with balance $49
+10: process 5 received all DONE messages
+0: process 6 (pid  5490, parent  5484) has STARTED with balance $60
+2: process 6 received all STARTED messages
+5: process 6 received $ 5 from process 5
+6: process 6 transferred $ 6 to process 7
+10: process 6 has DONE with balance $59
+10: process 6 received all DONE messages
+0: process 0 received all STARTED messages
+seding stop
+10: process 0 received all DONE messages
+((BalanceHistory*)&m.s_payload)->s_history[0].s_balance = 10
+((BalanceHistory*)&m.s_payload)->s_history[0].s_balance = 20
+((BalanceHistory*)&m.s_payload)->s_history[0].s_balance = 30
+((BalanceHistory*)&m.s_payload)->s_history[0].s_balance = 40
+((BalanceHistory*)&m.s_payload)->s_history[0].s_balance = 50
+((BalanceHistory*)&m.s_payload)->s_history[0].s_balance = 60
+((BalanceHistory*)&m.s_payload)->s_history[0].s_ba0: process 7 (pid  5491, parent  5484) has STARTED with balance $70
+2: process 7 received all STARTED messages
+6: process 7 received $ 6 from process 6
+7: process 7 transferred $ 7 to process 8
+10: process 7 has DONE with balance $69
+10: process 7 received all DONE messages
+0: process 8 (pid  5492, parent  5484) has STARTED with balance $80
+3: process 8 received all STARTED messages
+7: process 8 received $ 7 from process 7
+8: process 8 transferred $ 8 to process 9
+10: process 8 has DONE with balance $79
+10: process 8 received all DONE messages
+0: process 10 (pid  5494, parent  5484) has STARTED with balance $100
+3: process 10 received all STARTED messages
+9: process 10 received $ 9 from process 9
+10: process 10 transferred $ 1 to process 1
+10: process 10 has DONE with balance $108
+10: process 10 received all DONE messages
+lance = 70
+((BalanceHistory*)&m.s_payload)->s_history[0].s_balance = 80
+((BalanceHistory*)&m.s_payload)->s_history[0].s_balance = 90
+((BalanceHistory*)&m.s_payload)->s_history[0].s_balance = 100
+0: process 9 (pid  5493, parent  5484) has STARTED with balance $90
+3: process 9 received all STARTED messages
+8: process 9 received $ 8 from process 8
+9: process 9 transferred $ 9 to process 10
+10: process 9 has DONE with balance $89
+10: process 9 received all DONE messages
+
+Full balance history for time range [0;10], $balance:
+--------------------------------------------------------------------------------
+Proc \ time |    0 |   1 |   2 |   3 |   4 |   5 |   6 |   7 |   8 |   9 |  10 |
+--------------------------------------------------------------------------------
+          1 |   10 |   9 |   9 |   9 |   9 |   9 |   9 |   9 |   9 |   9 |  10 |
+--------------------------------------------------------------------------------
+          2 |   20 |  21 |  19 |  19 |  19 |  19 |  19 |  19 |  19 |  19 |  19 |
+--------------------------------------------------------------------------------
+          3 |   30 |  30 |  32 |  29 |  29 |  29 |  29 |  29 |  29 |  29 |  29 |
+--------------------------------------------------------------------------------
+          4 |   40 |  40 |  40 |  43 |  39 |  39 |  39 |  39 |  39 |  39 |  39 |
+--------------------------------------------------------------------------------
+          5 |   50 |  50 |  50 |  50 |  54 |  49 |  49 |  49 |  49 |  49 |  49 |
+--------------------------------------------------------------------------------
+          6 |   60 |  60 |  60 |  60 |  60 |  65 |  59 |  59 |  59 |  59 |  59 |
+--------------------------------------------------------------------------------
+          7 |   70 |  70 |  70 |  70 |  70 |  70 |  76 |  69 |  69 |  69 |  69 |
+--------------------------------------------------------------------------------
+          8 |   80 |  80 |  80 |  80 |  80 |  80 |  80 |  87 |  79 |  79 |  79 |
+--------------------------------------------------------------------------------
+          9 |   90 |  90 |  90 |  90 |  90 |  90 |  90 |  90 |  98 |  89 |  89 |
+--------------------------------------------------------------------------------
+         10 |  100 | 100 | 100 | 100 | 100 | 100 | 100 | 100 | 100 | 109 | 108 |
+--------------------------------------------------------------------------------
+      Total |  550 | 550 | 550 | 550 | 550 | 550 | 550 | 550 | 550 | 550 | 550 |
+--------------------------------------------------------------------------------

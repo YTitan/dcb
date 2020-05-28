@@ -27,10 +27,15 @@ int send(void * self, local_id dst, const Message * msg){
 	if (dst > ipc->numChannels || dst < 0)
 		return 1;
 	
-	if (write(ipc->channels[dst].writeDescr, msg, sizeof(msg->s_header) + msg->s_header.s_payload_len) == -1)
-		return 1;
+	size_t m_len = sizeof(msg->s_header) + msg->s_header.s_payload_len;
+	size_t total = 0;
+	do{
+		size_t val = write(ipc->channels[dst].writeDescr, msg, m_len);
+		if (val > 0)
+			total += val;
+	} while (total < m_len);
 
-	//printf("successfully sent a message from process %d to process %d\n", GetLocalProcessId(), dst);
+//	printf("successfully sent a message from process %d to process %d\n", GetLocalProcessId(), dst);
 
 	return 0;
 }
@@ -58,33 +63,19 @@ int receive(void * self, local_id from, Message * msg){
 	if (read(ipc->channels[from].readDescr, &msg->s_header, sizeof(msg->s_header)) == -1)
 		return 1;
 	
-	if (read(ipc->channels[from].readDescr, msg->s_payload, msg->s_header.s_payload_len) == -1)
+	
+	int ret = 1;
+	if (msg->s_header.s_payload_len > 0)
+	while ((ret = read(ipc->channels[from].readDescr, msg->s_payload, msg->s_header.s_payload_len)) == -1 && errno == EAGAIN);
+
+	//if (ret == 0)
+	//	printf("%d: process %d trying to receive from process %d: eof\n", get_physical_time(), GetLocalProcessId(), from);
+	if (ret <= 0)
 		return 1;
-
-	return 0;
+	else
+		return 0;
 }
 
-
-static int ReadNumBytesOrNothing(IPCHelper* ipc, local_id src, void* buf, size_t numBytes){
-	int val = read(ipc->channels[src].readDescr, buf, numBytes);
-
-	//if (val > 0)
-	//	printf("process %d trying to get data from process %d: val = %d\n", GetLocalProcessId(), src, val);
-
-	if (val <= 0) return 0;
-
-
-	if (val == numBytes) return 1;
-
-	size_t total = val;
-	while (total < numBytes) {
-		val = read(ipc->channels[src].readDescr, buf, numBytes - total);
-		if (val > 0)
-			total += val;
-	}
-
-	return 1;
-}
 
 int receive_any(void* self, Message * msg){
 	if (self == NULL)
@@ -92,15 +83,6 @@ int receive_any(void* self, Message * msg){
 	
 	IPCHelper* ipc = (IPCHelper*) self;
 
-	// make every read end of the pipe non-blocking
-	int* flags = (int*) malloc(sizeof(int) * ipc->numChannels);
-	for (int i = 0; i < ipc->numChannels; i++){
-		if (i != GetLocalProcessId()){
-			flags[i] = fcntl(ipc->channels[i].readDescr, F_GETFL);
-			fcntl(ipc->channels[i].readDescr, F_SETFL, flags[i] | O_NONBLOCK);
-	//		perror("making non-blocking");
-		}
-	}
 	
 	int ret = 0;
 	// poll each channel for available information
@@ -108,25 +90,13 @@ int receive_any(void* self, Message * msg){
 	while (proceed){
 		for (int i = 0; i < ipc->numChannels; i++){
 	                if (i != GetLocalProcessId()){
-				if (ReadNumBytesOrNothing(ipc, i, &msg->s_header, sizeof(msg->s_header))){
-	//				printf("process %d received message from process %d\n", GetLocalProcessId(), i);
-					ReadNumBytesOrNothing(ipc, i, &msg->s_payload, msg->s_header.s_payload_len);
-					proceed = 0;
-					break;
+				if (!receive(ipc, i, msg)){
+						proceed = 0;
+						break;
 				}
-
 			}
 	        }
 	}
-
-
-	// make io blocking again
-	for (int i = 0; i < ipc->numChannels; i++){
-		if (i != GetLocalProcessId()){
-                        fcntl(ipc->channels[i].readDescr, F_SETFL, flags[i]);
-                }
-        }
-	free(flags);
 
 	return ret;
 }

@@ -14,6 +14,7 @@ IPCHelper* ipc;
 
 /* BEGIN function declarations */
 int ChildMain();
+int receiveBlocking(IPCHelper* ipc, local_id src, Message* m);
 /* END function declarations */
 
 /*BEGIN global process variables declarations*/
@@ -31,7 +32,7 @@ int main(int argc, char* argv[]){
 		return EXIT_FAILURE;
 	}
 
-	// get starting balabces for each process
+	// get starting balances for each process
 	balance_t balances[MAX_NUM_CHILD_PROCESSES];
 	if (numChildProcesses + 3 > argc){
 		printf("list starting balances for all child processes\n");
@@ -60,7 +61,7 @@ int main(int argc, char* argv[]){
 		// receive started message from child processes
 		Message m;
 		for (int i = 1; i < ipc->numChannels;){
-			int ret = receive(ipc, i, &m);
+			int ret = receiveBlocking(ipc, i, &m);
 		        if (!ret && m.s_header.s_type == STARTED){
 				i++;
 			}
@@ -70,6 +71,7 @@ int main(int argc, char* argv[]){
 		bank_robbery(ipc, GetNumChildProcesses());
 
 		// send stop message
+		puts("seding stop");
 		m.s_header.s_magic = MESSAGE_MAGIC;
 		m.s_header.s_type = STOP;
 		m.s_header.s_local_time = get_physical_time();
@@ -79,7 +81,7 @@ int main(int argc, char* argv[]){
 
 		// receive done message from all child processes
 		for (int i = 1; i < ipc->numChannels;){
-			if (!receive(ipc, i, &m))
+			if (!receiveBlocking(ipc, i, &m))
 				if (m.s_header.s_type == DONE)
 					++i;
 		}
@@ -88,9 +90,14 @@ int main(int argc, char* argv[]){
 		AllHistory ah;
 		ah.s_history_len = GetNumChildProcesses();
 
-		for (int i = 0; i < GetNumChildProcesses(); ++i){
-			receive(ipc, i + 1, &m);
-			memcpy(ah.s_history + i, m.s_payload, m.s_header.s_payload_len);
+		for (int i = 0; i < GetNumChildProcesses();){
+			receiveBlocking(ipc, i + 1, &m);
+			if (m.s_header.s_type == BALANCE_HISTORY){
+				printf("((BalanceHistory*)&m.s_payload)->s_history[0].s_balance = %d\n",
+					((BalanceHistory*)&m.s_payload)->s_history[0].s_balance);
+				memcpy(ah.s_history + i, m.s_payload, m.s_header.s_payload_len);
+				++i;
+			}
 		}
 		
 		print_history(&ah);
@@ -118,16 +125,10 @@ int ChildMain(){
 	m.s_header.s_payload_len = StrPrintStarted(m.s_payload);
 	send_multicast(ipc, &m);
 
-	if (GetLocalProcessId() != 1){
-	m.s_header.s_type = ACK;
-	m.s_header.s_payload_len = 0;
-	send (ipc, 1, &m);
-	}
-
 	// receive started message from all other child processes
 	for (int i = 1; i < ipc->numChannels;)
                 if (i != GetLocalProcessId()){
-                        int ret = receive(ipc, i, &m);
+                        int ret = receiveBlocking(ipc, i, &m);
                         if (!ret && m.s_header.s_type == STARTED)
                                 i++;
                 }
@@ -139,6 +140,8 @@ int ChildMain(){
 	// init balance history
 	BalanceHistory bh;
 	bh.s_id = GetLocalProcessId();
+	bh.s_history_len = 1;
+	bh.s_history[0].s_balance = balance;
 	UpdateBalanceHistory(&bh);
 
 	// receive messages from other processes
@@ -199,11 +202,13 @@ int ChildMain(){
 
 	UpdateBalanceHistory(&bh);
 
+	if (bh.s_history[0].s_balance == 0)
+		puts("0");
 	// send balance history to parent process
 	m.s_header.s_type = BALANCE_HISTORY;
 	m.s_header.s_local_time = get_physical_time();
 	m.s_header.s_payload_len = sizeof(local_id) + sizeof(uint8_t) + sizeof(BalanceState) * bh.s_history_len;
-	memcpy(m.s_payload, bh.s_history, bh.s_history_len);
+	memcpy(m.s_payload, &bh, m.s_header.s_payload_len);
 	send(ipc, PARENT_ID, &m);
 
 	return EXIT_SUCCESS;
@@ -224,4 +229,9 @@ void UpdateBalanceHistory(BalanceHistory* bh){
 	bs->s_balance = balance;
 	bs->s_time = time;
 	bs->s_balance_pending_in = 0;
+}
+
+int receiveBlocking(IPCHelper* ipc, local_id src, Message* m){
+	while (receive(ipc, src, m));
+	return 0;
 }

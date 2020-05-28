@@ -2,6 +2,7 @@
 #include "processHandler.h"
 #include "ipc.h"
 #include <unistd.h>
+#include <fcntl.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include "ipcHandler.h"
@@ -187,8 +188,11 @@ static int CreatePipes(local_id numProcesses){
                         if (i != j) {
                                 if(pipe((int*) GetPipe(i,j)) == -1)
 					return -1;
-                                else
+                                else{
+					fcntl(GetPipe(i,j)->readDescr, F_SETFL, fcntl(GetPipe(i,j)->readDescr, F_GETFL) | O_NONBLOCK);
+					fcntl(GetPipe(i,j)->writeDescr, F_SETFL, fcntl(GetPipe(i,j)->writeDescr, F_GETFL) | O_NONBLOCK);
 					++numCreatedPipes;
+				}
                         }
 	return 0;
 }
