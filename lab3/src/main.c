@@ -18,7 +18,6 @@ int ChildMain();
 
 /*BEGIN global process variables declarations*/
 balance_t balance;
-balance_t pending = 0;
 /*END global process variables declarations*/
 
 int main(int argc, char* argv[]){

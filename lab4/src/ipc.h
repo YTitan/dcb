@@ -106,7 +106,7 @@ int receive(void * self, local_id from, Message * msg);
  * @param self    Any data structure implemented by students to perform I/O
  * @param msg     Message structure allocated by the caller
  *
- * @return id of sender process on success, -1 on error
+ * @return 0 on success, any non-zero value on error
  */
 int receive_any(void * self, Message * msg);
 

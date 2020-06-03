@@ -117,14 +117,15 @@ int receive_any(void* self, Message * msg){
 	
 	IPCHelper* ipc = (IPCHelper*) self;
 
+	int ret = -1;
 	// poll each channel for available information
 	int proceed = 1;
-	int i;
 	while (proceed){
-		for (i = 0; i < ipc->numChannels; i++){
+		for (int i = 0; i < ipc->numChannels; i++){
 	                if (i != GetLocalProcessId()){
 				if (!try_receive(ipc, i, msg)){
 						proceed = 0;
+						ret = i;
 						break;
 				}
 			}
@@ -133,5 +134,5 @@ int receive_any(void* self, Message * msg){
 
 	IncrementLamportTime(msg->s_header.s_local_time);
 
-	return i;
+	return ret;
 }
